@@ -1,5 +1,5 @@
-// C++ code
-//¼ÙÆÚ¿ªÔ´Ó²¼şÊµÕ½¿Î³Ì¡ª¡ª´ó×÷Òµ
+// C++ code// C++ code
+//å‡æœŸå¼€æºç¡¬ä»¶å®æˆ˜è¯¾ç¨‹â€”â€”å¤§ä½œä¸š
 #include<MsTimer2.h>
 #define a1 4
 #define a2 5
@@ -9,42 +9,28 @@
 #define lockg 9
 #define buttonInterrupt 2
 
-int tickg=0;//¸öÎ»
-int ticks=0;//Ê®Î»
+int tickg=0;//ä¸ªä½
+int ticks=0;//åä½
 void buttonchange()
 {
   if ( digitalRead(buttonInterrupt) == 1 )
   {
-    ticks=0;
-  	tickg=0;
-  	Serial.println("ok");
+    delay(20);//æ¶ˆé™¤æŠ–åŠ¨
+    if( digitalRead(buttonInterrupt) == 1 )
+    {
+      ticks=0;
+      tickg=0;
+      shownum();
+      Serial.println("ok");
+      MsTimer2::start(); //é‡æ–°å¼€å§‹è®¡æ—¶
+    }
   }
-  //°´ÏÂ°´Å¥ºóÇåÁã
+  //æŒ‰ä¸‹æŒ‰é’®åæ¸…é›¶
 }
 
 void timedo()
 {
-  Serial.print(ticks);
-  Serial.println(tickg);
-  //´òÓ¡µ±Ç°Êı×Ö
-  digitalWrite(locks,LOW);
-  digitalWrite(lockg,HIGH);
-  //¿ªÆôÊ®Î»ÏúËø
-  digitalWrite(a1,(ticks&0x1));
-  digitalWrite(a2,((ticks>>1)&0x1));
-  digitalWrite(a3,((ticks>>2)&0x1));
-  digitalWrite(a4,((ticks>>3)&0x1));
-  //ÏÔÊ¾
-  
-  digitalWrite(lockg,LOW);
-  digitalWrite(locks,HIGH);
-  //¿ªÆô¸öÎ»ÏúËø
-  digitalWrite(a1,(tickg&0x1));
-  digitalWrite(a2,((tickg>>1)&0x1));
-  digitalWrite(a3,((tickg>>2)&0x1));
-  digitalWrite(a4,((tickg>>3)&0x1));
-  //ÏÔÊ¾
-
+  shownum();
   tickg++;
   if(tickg>9)
   {
@@ -55,7 +41,31 @@ void timedo()
       ticks=0;
     }
   }
-  //µ½´ï99ºó¹éÁã  
+  //åˆ°è¾¾99åå½’é›¶  
+}
+
+void shownum()
+{
+  Serial.print(ticks);
+  Serial.println(tickg);
+  //æ‰“å°å½“å‰æ•°å­—
+  digitalWrite(locks,LOW);
+  digitalWrite(lockg,HIGH);
+  //å¼€å¯åä½é”€é”
+  digitalWrite(a1,(ticks&0x1));
+  digitalWrite(a2,((ticks>>1)&0x1));
+  digitalWrite(a3,((ticks>>2)&0x1));
+  digitalWrite(a4,((ticks>>3)&0x1));
+  //æ˜¾ç¤º
+  
+  digitalWrite(lockg,LOW);
+  digitalWrite(locks,HIGH);
+  //å¼€å¯ä¸ªä½é”€é”
+  digitalWrite(a1,(tickg&0x1));
+  digitalWrite(a2,((tickg>>1)&0x1));
+  digitalWrite(a3,((tickg>>2)&0x1));
+  digitalWrite(a4,((tickg>>3)&0x1));
+  //æ˜¾ç¤º
 }
 
 void setup()
@@ -64,13 +74,13 @@ void setup()
   pinMode(a2, OUTPUT);//A2
   pinMode(a3, OUTPUT);//A3
   pinMode(a4, OUTPUT);//A4
-  pinMode(locks, OUTPUT);//Ê®Î»ÊıËøÏú
-  pinMode(lockg, OUTPUT);//¸öÎ»ÊıËøÏú
-  pinMode(2,INPUT);//°´Å¥ÅĞ¶Ï
+  pinMode(locks, OUTPUT);//åä½æ•°é”é”€
+  pinMode(lockg, OUTPUT);//ä¸ªä½æ•°é”é”€
+  pinMode(2,INPUT);//æŒ‰é’®åˆ¤æ–­
   Serial.begin(9600);
-  MsTimer2::set(1000, timedo); //ÉèÖÃÖĞ¶Ï£¬1sÎª¼ä¸ô
-  MsTimer2::start(); //¿ªÊ¼¼ÆÊ±
-  attachInterrupt( digitalPinToInterrupt(buttonInterrupt),buttonchange, RISING);//¼àÊÓÒı½Å±ä»¯ÒÔÊµÏÖÍ¨¹ı°´Å¥ÇåÁã
+  MsTimer2::set(1000, timedo); //è®¾ç½®ä¸­æ–­ï¼Œ1sä¸ºé—´éš”
+  MsTimer2::start(); //å¼€å§‹è®¡æ—¶
+  attachInterrupt( digitalPinToInterrupt(buttonInterrupt),buttonchange, RISING);//ç›‘è§†å¼•è„šå˜åŒ–ä»¥å®ç°é€šè¿‡æŒ‰é’®æ¸…é›¶
 }
 
 void loop()
